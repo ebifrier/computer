@@ -788,6 +788,7 @@
 	"chat.forking": "Forking chat...",
 	"chat.forkDone": "Chat forked",
 	"chat.forkFailed": "Failed to fork chat",
+	"chat.sendFailed": "Failed to send message",
 	"chat.forkResponse": "Fork chat",
 	"chat.prevMessage": "Previous message",
 	"chat.nextMessage": "Next message",
