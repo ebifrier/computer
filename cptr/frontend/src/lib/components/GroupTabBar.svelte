@@ -129,6 +129,22 @@
 		closeTab(tabId, group.id);
 	}
 
+	function handleTabPointerDown(e: PointerEvent, tab: Tab) {
+		// Middle button: suppress autoscroll/paste and don't activate the tab; auxclick closes it.
+		if (e.button === 1) {
+			e.preventDefault();
+			return;
+		}
+		if (e.button !== 0) return;
+		handleTabClick(tab);
+	}
+
+	function handleTabAuxClick(e: MouseEvent, tab: Tab) {
+		if (e.button !== 1 || tab.permanent) return;
+		e.preventDefault();
+		handleClose(e, tab.id);
+	}
+
 	function handleCloseGroup(e: Event) {
 		e.stopPropagation();
 		if (home) return onHomeCloseGroup?.();
@@ -413,8 +429,9 @@
 						? 'bg-gray-200/50 text-gray-900 dark:bg-white/8 dark:text-white'
 						: 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}"
 					data-tab-id={tab.id}
-					onpointerdown={() => handleTabClick(tab)}
+					onpointerdown={(e) => handleTabPointerDown(e, tab)}
 					onclick={() => handleTabClick(tab)}
+					onauxclick={(e) => handleTabAuxClick(e, tab)}
 					oncontextmenu={(e) => handleContextMenu(e, tab)}
 				>
 					{#if tab.type === 'chat' && (chatStatus?.active || $streamingChatTabs.has(tab.id))}
