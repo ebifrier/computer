@@ -1162,6 +1162,7 @@
 	"chat.forking": "チャットをフォーク中...",
 	"chat.forkDone": "チャットをフォークしました",
 	"chat.forkFailed": "チャットのフォークに失敗しました",
+	"chat.sendFailed": "メッセージの送信に失敗しました",
 	"chat.forkResponse": "チャットをフォーク",
 	"models.builtinTools.tasks": "タスク",
 	"models.builtinTools.tasksDesc": "チャット内に表示可能なタスク進行状況を表示",

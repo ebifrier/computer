@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { ApiError } from '$lib/apis';
 	import {
 		getChat,
 		getChats,
@@ -910,6 +911,13 @@
 		return params;
 	}
 
+	function restoreDraft(draftText: string, draftFiles: any[], e: unknown) {
+		console.error('[chat] send error', e);
+		inputText = draftText;
+		chatInputEl?.restoreUploads(draftFiles);
+		toast.error(e instanceof ApiError && e.message ? e.message : $t('chat.sendFailed'));
+	}
+
 	async function send() {
 		let text = inputText.trim();
 		if (!text || !selectedModel) return;
@@ -941,6 +949,9 @@
 		if (shouldStreamTts()) void unlockTtsAudioPlayback();
 		sending = true;
 		const files = chatInputEl?.getFiles() ?? [];
+		// Keep the untransformed draft so it can be restored if the send fails.
+		const draftText = inputText;
+		const draftFiles = [...files];
 		// Transform TipTap mention format to markdown file links
 		text = text.replace(
 			/\[@\s+id="([^"]+)"\s+label="([^"]+)"\]/g,
@@ -1007,7 +1018,7 @@
 						currentMessageId = result.message_id;
 					}
 				} catch (e) {
-					console.error('[chat] send (queue) error', e);
+					restoreDraft(draftText, draftFiles, e);
 				} finally {
 					sending = false;
 					chatInputEl?.focus();
@@ -1064,10 +1075,10 @@
 				updateTab(tabId, result.chat_id, text.slice(0, 40) || $t('chat.fallbackTitle'));
 			}
 		} catch (e) {
-			console.error('[chat] send error', e);
 			allMessages = allMessages.filter((m) => m.id !== tempId);
 			currentMessageId = parentId;
-			throw e;
+			if (isNew && tabId) updateTab(tabId, `pending-${tempId}`, $t('bar.newChat'));
+			restoreDraft(draftText, draftFiles, e);
 		} finally {
 			sending = false;
 			chatInputEl?.focus();

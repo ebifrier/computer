@@ -731,6 +731,10 @@
 		attachedUploads = [];
 	}
 
+	export function restoreUploads(uploads: ReturnType<typeof getFiles>) {
+		attachedUploads = [...uploads];
+	}
+
 	export function getSkillIds(): string[] {
 		if (!editor) return [];
 		return extractMentionedSkills(editor.getJSON());
