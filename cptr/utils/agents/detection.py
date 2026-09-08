@@ -25,17 +25,26 @@ from cptr.utils.agents.opencode import opencode_server_url_candidates
 
 DETECTION_TTL_SECONDS = 30
 CLAUDE_MODEL_FALLBACKS = [
+    "claude-fable-5-1",
     "claude-fable-5",
+    "claude-opus-5",
     "claude-opus-4-8",
     "claude-opus-4-7",
     "claude-opus-4-6",
     "claude-opus-4-5",
+    "claude-sonnet-5",
     "claude-sonnet-4-6",
     "claude-haiku-4-5",
 ]
-MIN_CLAUDE_FABLE_5 = (2, 1, 169)
-MIN_CLAUDE_OPUS_4_8 = (2, 1, 154)
-MIN_CLAUDE_OPUS_4_7 = (2, 1, 111)
+# Minimum Claude Code version that recognizes each model (from the Claude Code changelog).
+MIN_CLAUDE_VERSION_BY_MODEL = {
+    "claude-fable-5-1": (2, 1, 257),
+    "claude-fable-5": (2, 1, 169),
+    "claude-opus-5": (2, 1, 219),
+    "claude-opus-4-8": (2, 1, 154),
+    "claude-opus-4-7": (2, 1, 111),
+    "claude-sonnet-5": (2, 1, 197),
+}
 
 
 @dataclass
@@ -315,11 +324,8 @@ def _claude_models_for_version(version: str | None) -> list[str]:
     parsed = _parse_version_tuple(version)
     models = []
     for model in CLAUDE_MODEL_FALLBACKS:
-        if model == "claude-fable-5" and not _version_at_least(parsed, MIN_CLAUDE_FABLE_5):
-            continue
-        if model == "claude-opus-4-8" and not _version_at_least(parsed, MIN_CLAUDE_OPUS_4_8):
-            continue
-        if model == "claude-opus-4-7" and not _version_at_least(parsed, MIN_CLAUDE_OPUS_4_7):
+        minimum = MIN_CLAUDE_VERSION_BY_MODEL.get(model)
+        if minimum is not None and not _version_at_least(parsed, minimum):
             continue
         models.append(model)
     return models
