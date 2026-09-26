@@ -27,6 +27,7 @@ DETECTION_TTL_SECONDS = 30
 CLAUDE_MODEL_FALLBACKS = [
     "claude-fable-5-1",
     "claude-fable-5",
+    "claude-opus-5-5",
     "claude-opus-5",
     "claude-opus-4-8",
     "claude-opus-4-7",
@@ -40,6 +41,7 @@ CLAUDE_MODEL_FALLBACKS = [
 MIN_CLAUDE_VERSION_BY_MODEL = {
     "claude-fable-5-1": (2, 1, 257),
     "claude-fable-5": (2, 1, 169),
+    "claude-opus-5-5": (2, 1, 280),
     "claude-opus-5": (2, 1, 219),
     "claude-opus-4-8": (2, 1, 154),
     "claude-opus-4-7": (2, 1, 111),
