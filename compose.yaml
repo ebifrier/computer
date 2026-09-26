@@ -3,7 +3,8 @@
 #   docker compose up -d --build
 #   docker compose logs cptr | grep token   # first-run admin setup URL
 #
-# Anyone who can log in gets full shell access inside the container.
+# Anyone who can log in gets full shell access inside the container,
+# including read/write access to the host project directories mounted below.
 # Keep the port bound to localhost and reach it through Tailscale or a
 # reverse proxy with HTTPS; do not expose it directly to the internet.
 
@@ -20,8 +21,16 @@ services:
     volumes:
       - cptr-data:/data
       - ${CPTR_WORKSPACE:-./workspace}:/workspace
+      # Host projects at the same paths, so they keep their host paths.
+      # The image's cptr user is UID 1000; file access matches a UID 1000 host user.
+      - ${HOME}:${HOME}
     working_dir: /workspace
     environment:
+      SHELL: /bin/bash # terminals fall back to /bin/sh when unset
+      # Use the mounted host home as HOME, so git, gh, Claude Code, etc. share
+      # the host's config and credentials. The app's venv stays in /home/cptr.
+      HOME: ${HOME}
+      PATH: /home/cptr/.venv/bin:${HOME}/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
       CPTR_LOG_FORMAT: json
       CPTR_AUDIT_LOG_LEVEL: ${CPTR_AUDIT_LOG_LEVEL:-METADATA}
       CPTR_CORS_ALLOWED_ORIGINS: ${CPTR_CORS_ALLOWED_ORIGINS:-*}
