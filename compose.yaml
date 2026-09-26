@@ -1,0 +1,40 @@
+# Production deployment for Open WebUI Computer, built from this checkout.
+#
+#   docker compose up -d --build
+#   docker compose logs cptr | grep token   # first-run admin setup URL
+#
+# Anyone who can log in gets full shell access inside the container.
+# Keep the port bound to localhost and reach it through Tailscale or a
+# reverse proxy with HTTPS; do not expose it directly to the internet.
+
+services:
+  cptr:
+    build:
+      context: .
+      target: ${CPTR_TARGET:-default} # "browser" adds Chromium for agent browser automation
+    image: cptr-local:${CPTR_TARGET:-default}
+    restart: unless-stopped
+    init: false # the image already runs tini as PID 1
+    ports:
+      - "${CPTR_BIND:-127.0.0.1}:${CPTR_PORT:-8000}:8000"
+    volumes:
+      - cptr-data:/data
+      - ${CPTR_WORKSPACE:-./workspace}:/workspace
+    working_dir: /workspace
+    environment:
+      CPTR_LOG_FORMAT: json
+      CPTR_AUDIT_LOG_LEVEL: ${CPTR_AUDIT_LOG_LEVEL:-METADATA}
+      CPTR_CORS_ALLOWED_ORIGINS: ${CPTR_CORS_ALLOWED_ORIGINS:-*}
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=5)"
+      interval: 30s
+      timeout: 10s
+      start_period: 30s
+      retries: 3
+
+volumes:
+  cptr-data:
