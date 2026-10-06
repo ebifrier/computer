@@ -26,7 +26,7 @@
 :root {
 	--app-text-scale: 1;
 	--app-bg: #ffffff;
-	--app-fg: #525252;
+	--app-fg: #262626;
 	--app-fg-muted: color-mix(in oklab, var(--app-fg) 62%, var(--app-bg));
 	--app-fg-subtle: color-mix(in oklab, var(--app-fg) 48%, var(--app-bg));
 	--app-border: color-mix(in oklab, var(--app-fg) 1.5%, transparent);

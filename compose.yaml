@@ -17,7 +17,7 @@ services:
     restart: unless-stopped
     init: false # the image already runs tini as PID 1
     ports:
-      - "${CPTR_BIND:-127.0.0.1}:${CPTR_PORT:-8000}:8000"
+      - "${CPTR_BIND:-0.0.0.0}:${CPTR_PORT:-8000}:8000"
     volumes:
       - cptr-data:/data
       - ${CPTR_WORKSPACE:-./workspace}:/workspace

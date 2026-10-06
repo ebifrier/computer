@@ -94,7 +94,7 @@ export function defaultThemeConfig(theme: Theme): Required<ThemeColors> & { uiFo
 	const resolved = resolveThemeMode(theme);
 	return {
 		background: resolved === 'dark' ? '#0a0a0a' : '#ffffff',
-		foreground: resolved === 'dark' ? '#d4d4d4' : '#525252',
+		foreground: resolved === 'dark' ? '#e5e5e5' : '#262626',
 		uiFont: DEFAULT_UI_FONT
 	};
 }
